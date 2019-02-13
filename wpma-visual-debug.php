@@ -9,6 +9,9 @@ License: GPLv2 or later
 */
 
 if (!class_exists('WPMA_Visual_Debugger')) :
+    /**
+     * WPMA_Visual_Debugger - Class
+     */
 	class WPMA_Visual_Debugger {
 
 		/**
@@ -47,18 +50,44 @@ if (!class_exists('WPMA_Visual_Debugger')) :
             $this->file         = __FILE__;
 
             // hooks
+            add_action( 'admin_menu', 'wpma_add_menu_admin');
 		} // end __construct;
 
-	} // end class WPMA_Visual_Debugger;
+        /**
+         * Add menu admin
+         *
+         * @return void
+         */
+        public function wpma_add_menu_admin() {
+
+            add_menu_page( 'WPMA Visual Debugger', 'WPMA Visual Debugger', 'manage_options', 'wpma-visual-debugger', array($this, 'wpma_display_main_view'), 'dashicons-editor-code', 1  );
+
+        } // end wpma_add_menu_admin;
+
+        /**
+         * Display main view
+         *
+         * @return void
+         */
+        public function wpma_display_main_view() {
+            include dirname( __FILE__ ) . '/views/view_main.php';
+        } // end wpma_display_main_view;
+
+
+	}  // end class WPMA_Visual_Debugger;
+
+
+
+} // end if;
 
 	/**
 	 * Returns the active instance of the plugin
 	 *
 	 * @return WPMA_Visual_Debugger
 	 */
-	function WPMA_Visual_Debugger() {
-		return WPMA_Visual_Debugger::get_instance();
-	} // end WPMA_Visual_Debugger;
+function WPMA_Visual_Debugger() {
+	return WPMA_Visual_Debugger::get_instance();
+} // end WPMA_Visual_Debugger;
 
     WPMA_Visual_Debugger(); // init;
 endif;
