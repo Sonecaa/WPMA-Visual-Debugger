@@ -1,0 +1,17 @@
+.wpma-body{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch;
+}
+.wpma-colum > * {
+    min-width: 200px;
+}
+.wpma-colum > textarea{
+    width: 400px;
+}
+.wpma-colum > select {
+    height: auto;
+}

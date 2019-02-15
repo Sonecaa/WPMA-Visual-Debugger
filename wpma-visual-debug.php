@@ -1,12 +1,12 @@
 <?php
-/*
-Plugin Name: WPMA: Visual Debugger
-Description: Visualize var_dumps of all post types of your site.
-Version: 1.0
-Author: WPMA
-Author URI: https://github.com/Sonecaa
-License: GPLv2 or later
-*/
+/**
+ * Plugin Name: WPMA: Visual Debugger
+ * Description: Visualize var_dumps of all post types of your site.
+ * Version: 1.0
+ * Author: WPMA
+ * Author URI: https://github.com/Sonecaa
+ * License: GPLv2 or later
+ */
 
 if (!class_exists('WPMA_Visual_Debugger')) :
     /**
@@ -49,8 +49,16 @@ if (!class_exists('WPMA_Visual_Debugger')) :
 			$this->plugins_path = plugin_dir_path(__DIR__);
             $this->file         = __FILE__;
 
+			// add_action('admin_init', function() {
+				// wu_console_log('string', array('1', '2', '2'), WPMA_Visual_Debugger::get_instance(), PHP_VERSION);
+            // });
             // hooks
-            add_action( 'admin_menu', 'wpma_add_menu_admin');
+            add_action( 'admin_menu', array($this, 'wpma_add_menu_admin'));
+
+            add_action('admin_enqueue_scripts', array($this, 'wpma_load_assets'), 10);
+
+            add_action('wp_ajax_wpma_get_posts_by_post_type', array($this, 'wpma_get_posts_by_post_type'));
+
 		} // end __construct;
 
         /**
@@ -71,25 +79,70 @@ if (!class_exists('WPMA_Visual_Debugger')) :
          */
         public function wpma_display_main_view() {
             include dirname( __FILE__ ) . '/views/view_main.php';
-        } // end wpma_display_main_view;
+        }  // end wpma_display_main_view;
+
+        /**
+         * Load Assets
+         *
+         * @return void
+         */
+        public function wpma_load_assets() {
+
+            wp_enqueue_style('wpma-stylesheet', plugins_url(null, __FILE__) . '/assets/main.css');
+            wp_register_script('wpma-javascript', plugins_url(null, __FILE__) . '/assets/main.js', array( 'jquery' ), true );
+            wp_localize_script( 'wpma-javascript', 'wpma_vars', array( 'ajax_url' => admin_url( 'admin-ajax.php' )) );
+            wp_enqueue_script( 'wpma-javascript');
+
+        }  // end wpma_load_assets;
+
+        /**
+         * Return all post types
+         *
+         * @return array
+         */
+        public function wpma_get_post_types() {
+
+            return get_post_types();
+        } // end wpma_get_post_types;
+
+        /**
+         * Return all post types
+         *
+         * @return array
+         */
+        public function wpma_get_posts_by_post_type() {
+
+            if (!isset($_POST['post-type'])) {
+                wp_send_json_error('WPMA_wpma_get_posts_by_post_type ERROR: Not set $_POST');
+            } // end if;
+
+            $args = array(
+                'numberposts' => -1,
+                'post_type'   => $_POST['post-type'],
+            );
+
+            $posts = get_posts( $args );
+
+            wp_send_json_success(array(
+                'posts' => $posts,
+            ));
+        } // end wpma_get_posts_by_post_type;
+
 
 
 	}  // end class WPMA_Visual_Debugger;
 
-
-
-} // end if;
 
 	/**
 	 * Returns the active instance of the plugin
 	 *
 	 * @return WPMA_Visual_Debugger
 	 */
-function WPMA_Visual_Debugger() {
-	return WPMA_Visual_Debugger::get_instance();
-} // end WPMA_Visual_Debugger;
+	function wpa_visual_debugger() {
+		return WPMA_Visual_Debugger::get_instance();
+	} // end wpa_visual_debugger;
 
-    WPMA_Visual_Debugger(); // init;
+    wpa_visual_debugger(); // init;
 endif;
 
 // add_action('before_render_selector_language', 'wu_display_icon_selector_language');
