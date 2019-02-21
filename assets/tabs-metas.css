@@ -1,0 +1,50 @@
+/* ******* TABS *******  */
+
+.tabs-metas{
+    display: block;
+    position: relative;
+}
+
+.tabs-metas .tab-metas{
+    float: left;
+    display: block;
+}
+
+.tabs-metas .tab-metas>input[type="radio"] {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.tabs-metas .tab-metas>label {
+    display: block;
+    padding: 6px 21px;
+    font-size: 12px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    color: #FFF;
+    background: #9ca1a6;
+}
+
+.tabs-metas .content {
+    z-index: 0;/* or display: none; */
+    overflow: hidden;
+    position: absolute;
+	left: 0;
+	top: 47px;
+    opacity:0;
+    transition: opacity 400ms ease-out;
+}-metas
+
+.tabs-metas>.tab-metas>[id^="tab-metas"]:checked + label {
+    top: 0;
+    background: #5d5d5e;
+    color: #F5F5F5;
+}
+
+.tabs-metas>.tab-metas>[id^="tab-metas"]:checked ~ [id^="tab-content-metas"] {
+    z-index: 1;/* or display: block; */
+    opacity: 1;
+    transition: opacity 400ms ease-out;
+}

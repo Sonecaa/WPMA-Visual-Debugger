@@ -1,12 +1,12 @@
 <?php
-/**
- * Plugin Name: WPMA: Visual Debugger
- * Description: Visualize var_dumps of all post types of your site.
- * Version: 1.0
- * Author: WPMA
- * Author URI: https://github.com/Sonecaa
- * License: GPLv2 or later
- */
+/*
+Plugin Name: WPMA Visual Debugger
+Description: Visualize var_dumps, json pretty of all post types of your site.
+Version: 0.1.0
+Author: WPMA
+Author URI: https://github.com/Sonecaa
+License: GPLv2 or later
+*/
 
 if (!class_exists('WPMA_Visual_Debugger')) :
     /**
@@ -59,6 +59,12 @@ if (!class_exists('WPMA_Visual_Debugger')) :
 
             add_action('wp_ajax_wpma_get_posts_by_post_type', array($this, 'wpma_get_posts_by_post_type'));
 
+            add_action('wp_ajax_wpma_get_var_dump_post', array($this, 'wpma_get_var_dump_post'));
+
+            add_action('wp_ajax_wpma_has_meta', array($this, 'wpma_has_meta'));
+
+            add_action('wp_ajax_wpma_already_publish', array($this, 'wpma_already_publish'));
+
 		} // end __construct;
 
         /**
@@ -89,6 +95,9 @@ if (!class_exists('WPMA_Visual_Debugger')) :
         public function wpma_load_assets() {
 
             wp_enqueue_style('wpma-stylesheet', plugins_url(null, __FILE__) . '/assets/main.css');
+            wp_enqueue_style('wpma-stylesheet-loader', plugins_url(null, __FILE__) . '/assets/loader.css');
+            wp_enqueue_style('wpma-stylesheet-tabs-results', plugins_url(null, __FILE__) . '/assets/tabs-results.css');
+            wp_enqueue_style('wpma-stylesheet-tabs-metas', plugins_url(null, __FILE__) . '/assets/tabs-metas.css');
             wp_register_script('wpma-javascript', plugins_url(null, __FILE__) . '/assets/main.js', array( 'jquery' ), true );
             wp_localize_script( 'wpma-javascript', 'wpma_vars', array( 'ajax_url' => admin_url( 'admin-ajax.php' )) );
             wp_enqueue_script( 'wpma-javascript');
@@ -106,7 +115,7 @@ if (!class_exists('WPMA_Visual_Debugger')) :
         } // end wpma_get_post_types;
 
         /**
-         * Return all post types
+         * Return posts by post type
          *
          * @return array
          */
@@ -128,7 +137,70 @@ if (!class_exists('WPMA_Visual_Debugger')) :
             ));
         } // end wpma_get_posts_by_post_type;
 
+        /**
+         * Return var dump of post type
+         *
+         * @return array
+         */
+        public function wpma_get_var_dump_post() {
 
+            if (!isset($_POST['post'])) {
+                wp_send_json_error('WPMA_wpma_get_var_dump_post ERROR: Not set $_POST');
+            } // end if;
+
+            $post = get_post( $_POST['post'] );
+
+            wp_send_json_success(array(
+                'id'          => $post->ID,
+                'var_dump'    => $post,
+                'json'        => json_encode($post),
+                'json_pretty' => json_encode($post, JSON_PRETTY_PRINT),
+            ));
+        } // end wpma_get_var_dump_post;
+
+        /**
+         * Checks post has meta
+         *
+         * @return mixed
+         */
+        public function wpma_has_meta() {
+            if (!isset($_POST['id'])) {
+                wp_send_json_error('WPMA_wpma_has_meta ERROR: Not set $_POST');
+            } // end if;
+
+            if (!empty( get_post_meta( $_POST['id'] ) ) ) {
+                wp_send_json_success(array(
+                    'boolean' => 'true',
+                ));
+            } else {
+                wp_send_json_success(array(
+                    'boolean' => 'false',
+                ));
+            } // end if;
+
+        } // end wpma_has_meta;
+
+        /**
+         * Checks post already publish
+         *
+         * @return mixed
+         */
+        public function wpma_already_publish() {
+            if (!isset($_POST['id'])) {
+                wp_send_json_error('WPMA_wpma_already_publish ERROR: Not set $_POST');
+            } // end if;
+
+            if (get_post($_POST['id'])->post_status == 'publish' ) {
+                wp_send_json_success(array(
+                    'boolean' => 'true',
+                ));
+            } else {
+                wp_send_json_success(array(
+                    'boolean' => 'false',
+                ));
+            } // end if;
+
+        }  // end wpma_already_publish;
 
 	}  // end class WPMA_Visual_Debugger;
 

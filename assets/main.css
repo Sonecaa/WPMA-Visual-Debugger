@@ -6,12 +6,51 @@
 	align-items: stretch;
 	align-content: stretch;
 }
+
+.wpma-colum {
+    margin: 10px;
+}
+
 .wpma-colum > * {
     min-width: 200px;
 }
-.wpma-colum > textarea{
-    width: 400px;
+
+.wpma-colum textarea, .wpma-footer textarea{
+	width: 400px;
+	min-width: 400px;
+	height: 360px !important;
 }
+
 .wpma-colum > select {
     height: auto;
+}
+
+.wpma-footer{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-around;
+	align-items: stretch;
+	align-content: stretch;
+}
+
+.wpma-footer > div {
+    border: 1px solid #dddddd;
+    /* min-width: 100%; */
+    width: 100%;
+	padding: 0 30px;
+}
+
+/* STATUS */ 
+
+.wpma-each-status {
+    font-weight: 600;
+}
+
+.wpma-each-status.green {
+    color: #25af25;
+}
+
+.wpma-each-status.red {
+    color: #e21a1a;
 }

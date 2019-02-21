@@ -1,0 +1,51 @@
+/* ******* TABS *******  */
+
+.tabs-results{
+    display: block;
+    position: relative;
+}
+
+.tabs-results .tab-results{
+    float: left;
+    display: block;
+}
+
+.tabs-results .tab-results>input[type="radio"] {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.tabs-results .tab-results>label {
+    display: block;
+    padding: 6px 21px;
+    font-size: 12px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    color: #FFF;
+    background: #9ca1a6;
+}
+
+.tabs-results .content {
+    z-index: 0;/* or display: none; */
+    overflow: hidden;
+    position: absolute;
+	left: 0;
+	top: 47px;
+    opacity:0;
+    transition: opacity 400ms ease-out;
+}
+
+.tabs-results>.tab-results>[id^="tab-results"]:checked + label {
+    top: 0;
+    background: #5d5d5e;
+    color: #F5F5F5;
+}
+
+.tabs-results>.tab-results>[id^="tab-results"]:checked ~ [id^="tab-content-results"] {
+    z-index: 1;/* or display: block; */
+   
+    opacity: 1;
+    transition: opacity 400ms ease-out;
+}
