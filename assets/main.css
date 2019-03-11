@@ -19,6 +19,8 @@
 	width: 400px;
 	min-width: 400px;
 	height: 360px !important;
+	line-height: 2em;
+	white-space: nowrap;
 }
 
 .wpma-colum > select {

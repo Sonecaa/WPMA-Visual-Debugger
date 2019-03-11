@@ -140,7 +140,7 @@ if (!class_exists('WPMA_Visual_Debugger')) :
         /**
          * Return var dump of post type
          *
-         * @return array
+         * @return void
          */
         public function wpma_get_var_dump_post() {
 
@@ -151,10 +151,13 @@ if (!class_exists('WPMA_Visual_Debugger')) :
             $post = get_post( $_POST['post'] );
 
             wp_send_json_success(array(
-                'id'          => $post->ID,
-                'var_dump'    => $post,
-                'json'        => json_encode($post),
-                'json_pretty' => json_encode($post, JSON_PRETTY_PRINT),
+                'id'               => $post->ID,
+                'var_dump'         => $post,
+                'json'             => json_encode($post),
+                'json_pretty'      => json_encode($post, JSON_PRETTY_PRINT),
+                'var_dump_meta'    => get_post_meta($post->ID),
+                'json_meta'        => json_encode(get_post_meta($post->ID)),
+                'json_pretty_meta' => json_encode(get_post_meta($post->ID), JSON_PRETTY_PRINT),
             ));
         } // end wpma_get_var_dump_post;
 
@@ -216,109 +219,4 @@ if (!class_exists('WPMA_Visual_Debugger')) :
 
     wpa_visual_debugger(); // init;
 endif;
-
-// add_action('before_render_selector_language', 'wu_display_icon_selector_language');
-// add_action('after_render_selector_language', 'wu_add_script_selector_language');
-add_action('wp_print_scripts', 'wu_localize_script_selector_language');
-// add_action('wp_ajax_get_url_args_selector_language', 'wu_get_url_args_selector_language');
-// add_action('wp_ajax_nopriv_get_url_args_selector_language', 'wu_get_url_args_selector_language');
-
-/**
- * Localizes scripts
- *
- * @return void
- */
-function wu_localize_script_selector_language() {
-
-    wp_localize_script('wu-selector-language', 'wu_selector_language_vars', array(
-        'ajaxurl' => admin_url( 'admin-ajax.php' ),
-    ));
-
-}  // end wu_localize_script_selector_language;
-
-/**
- * Add script after selector
- *
- * @return void
- */
-function wu_add_script_selector_language() {
-    global $wp;
-    $request = $wp->request;
-    $message = __('Changing the language...', 'wp-ultimo');
-    ?>
-    <script>
-        jQuery(document).ready(function($){
-
-            function blockui_selector_language(){
-                $('.login').block({
-                  message: '<b><?php echo $message; ?></b>',
-                  css: {
-                    padding: '30px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#444',
-                    top: '150px',
-                  },
-                  overlayCSS: {
-                    background: '#F1F1F1',
-                    opacity: 0.75,
-                    cursor: 'initial',
-                  }
-                });
-            }// end blockui_selector_language;
-
-            $( "#locale" ).change(function() {
-
-                console.log($('#locale').val());
-
-                //loader
-                blockui_selector_language();
-
-                if($('#locale').val() || $('#locale option:selected').attr("lang")) {
-                    var data = {
-                    'action': 'get_url_args_selector_language',
-                    'locale': $('#locale').val() ? $('#locale').val() : $('#locale option:selected').attr("lang"),
-                    'request': '<?php echo $request; ?>',
-                    };
-                    jQuery.ajax({
-                        url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-                        type: 'post',
-                        data: data,
-                    success: function (response) {
-                        if (response.success && response.data.url != '') {
-                            window.location = response.data.url;
-                        } else {
-                            console.error(response);
-                            jQuery('body').unblock();
-                        }
-                    },// end success;
-                    error: function (error) {
-                        console.error(error);
-                        jQuery('body').unblock();
-                    }// end error;
-                    }) // end ajax;
-                }// end if;
-            });// end change();
-        });
-    </script>
-    <?php
-
-}  // end wu_add_script_selector_language;
-
-/**
- * Ajax callback function
- *
- * @return void
- */
-function wu_get_url_args_selector_language() {
-
-	$current_url = home_url(add_query_arg(array('locale' => $_POST['locale']), $_POST['request']));
-
-	setcookie('wu_selector_language', $_POST['locale'], time() + WEEK_IN_SECONDS, '/');
-
-	wp_send_json_success(array(
-		'url' => $current_url,
-	));
-
-}  // end wu_get_url_args_selector_language;
 

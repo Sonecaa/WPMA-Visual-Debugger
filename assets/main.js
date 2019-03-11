@@ -52,9 +52,13 @@ $(document).ready(function () {
                 data: data,
                 success: function (response) {
                     if (response.success) {
-                        call_render_var_dump(response.data.var_dump);
-                        call_render_json(response.data.json);
-                        call_render_prettyjson(response.data.json_pretty);
+                        call_render_var_dump(response.data.var_dump, '#wpma-ta-vardump');
+                        call_render_json(response.data.json, '#wpma-ta-json');
+                        call_render_prettyjson(response.data.json_pretty, '#wpma-ta-prettyjson');
+
+                        call_render_var_dump(response.data.var_dump_meta, '#wpma-ta-vardump-meta');
+                        call_render_json(response.data.json_meta, '#wpma-ta-json-meta');
+                        call_render_prettyjson(response.data.json_pretty_meta, '#wpma-ta-prettyjson-meta');
 
                         call_render_status(response.data.id);
 
@@ -84,21 +88,21 @@ function call_render_posts(posts) {
 
 }
 
-function call_render_var_dump(obj){
+function call_render_var_dump(obj, id_dom){
     var out = '';
     for (var i in obj) {
         out += i + ": " + obj[i] + "\n";
     }
 
-    $('#wpma-ta-vardump').html(out);
+    $(id_dom).html(out);
 }
 
-function call_render_json(text){
-    $('#wpma-ta-json').html(text);
+function call_render_json(text, id_dom){
+    $(id_dom).html(text);
 }
 
-function call_render_prettyjson(text){
-    $('#wpma-ta-prettyjson').html(text);
+function call_render_prettyjson(text, id_dom){
+    $(id_dom).html(text);
 }
 
 function clear_results(){
